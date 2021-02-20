@@ -3,12 +3,15 @@ local pause_at_start = false
 local pause_at_end = false
 local skip_next = false
 local pause_at = 0
+local end_sub_vis = nil
 
 function pause()
 	if skip_next then skip_next = false
 	else
 		mp.set_property("pause", "yes")
-		mp.set_property("sub-visibility","yes")
+		if end_sub_vis then
+			mp.set_property("sub-visibility","yes")
+		end
 	end
 end
 
@@ -75,6 +78,7 @@ end)
 
 mp.add_key_binding("n", "sub-pause-toggle-end", function()
 	pause_at_end = not pause_at_end
+	end_sub_vis = true
 	toggle()
 end)
 
