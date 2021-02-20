@@ -6,7 +6,10 @@ local pause_at = 0
 
 function pause()
 	if skip_next then skip_next = false
-	else mp.set_property("pause", "yes") end
+	else
+		mp.set_property("pause", "yes")
+		mp.set_property("sub-visibility","yes")
+	end
 end
 
 function handle_tick(_, time_pos)
@@ -25,13 +28,15 @@ function handle_sub_text_change(_, sub_text)
 	end
 end
 
-function replay_sub()
+function replay_sub(sub_vis)
 	-- prevent pause if pausing at start is enabled
 	if pause_at_start then skip_next = true end
 
 	local sub_start = mp.get_property_number("sub-start")
 	if sub_start ~= nil then
 		mp.set_property("time-pos", sub_start + mp.get_property_number("sub-delay"))
+		-- Hides subtitle line if desired
+		if not sub_vis then mp.set_property("sub-visibility","no") end
 		mp.set_property("pause", "no")
 	end
 end
@@ -75,4 +80,5 @@ end)
 
 mp.add_key_binding("Alt+r", "sub-pause-skip-next", function() skip_next = true end)
 
-mp.add_key_binding("Ctrl+r", "sub-pause-replay", function() replay_sub() end)
+mp.add_key_binding("Ctrl+r", "sub-pause-replay", function() replay_sub(false) end)
+mp.add_key_binding("Ctrl+e", "sub-pause-replay-vis", function() replay_sub(true) end)
